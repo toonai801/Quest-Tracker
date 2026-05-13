@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronDown, Plus, Trash2, Edit2, Check, BarChart3, Settings, Home, List, Heart, Trophy, Download, Upload, Volume2, VolumeX, AlertCircle, Zap, TrendingUp } from 'lucide-react';
+import { Plus, Trash2, Edit2, Check, BarChart3, Settings, Home, List, Heart, Trophy, Download, Upload, Volume2, VolumeX } from 'lucide-react';
 
 const DailyQuestTracker = () => {
   const [gameState, setGameState] = useState(null);
@@ -10,7 +10,6 @@ const DailyQuestTracker = () => {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [animationsEnabled, setAnimationsEnabled] = useState(true);
   const [theme, setTheme] = useState('dark-neon');
-  const audioRef = useRef(null);
 
   useEffect(() => {
     const saved = localStorage.getItem('questTrackerState');
