@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function App() {
+function App() {
   const [player, setPlayer] = useState(null);
   const [toast, setToast] = useState(null);
   const [editingId, setEditingId] = useState(null);
@@ -9,11 +9,30 @@ export default function App() {
   const [sound, setSound] = useState(true);
 
   useEffect(() => {
-    const saved = localStorage.getItem('questGame');
-    if (saved) {
-      setPlayer(JSON.parse(saved));
-    } else {
-      const newPlayer = {
+    try {
+      const saved = localStorage.getItem('questGame');
+      if (saved) {
+        setPlayer(JSON.parse(saved));
+      } else {
+        const newPlayer = {
+          level: 1,
+          xp: 0,
+          maxXp: 100,
+          gold: 0,
+          streak: 0,
+          quests: [
+            { id: 1, title: '💪 Exercise', xp: 50, done: false },
+            { id: 2, title: '🧘 Meditate', xp: 30, done: false },
+            { id: 3, title: '💧 Drink Water', xp: 20, done: false },
+            { id: 4, title: '📚 Read', xp: 40, done: false },
+          ],
+        };
+        setPlayer(newPlayer);
+        localStorage.setItem('questGame', JSON.stringify(newPlayer));
+      }
+    } catch (e) {
+      console.error('Error loading player:', e);
+      setPlayer({
         level: 1,
         xp: 0,
         maxXp: 100,
@@ -25,9 +44,7 @@ export default function App() {
           { id: 3, title: '💧 Drink Water', xp: 20, done: false },
           { id: 4, title: '📚 Read', xp: 40, done: false },
         ],
-      };
-      setPlayer(newPlayer);
-      localStorage.setItem('questGame', JSON.stringify(newPlayer));
+      });
     }
   }, []);
 
@@ -54,7 +71,7 @@ export default function App() {
 
   const completeQuest = (id) => {
     const quest = player.quests.find(q => q.id === id);
-    if (quest.done) return;
+    if (!quest || quest.done) return;
 
     playSound(800, 150);
     showToast(`+${quest.xp} XP!`, '#00ff00');
@@ -201,23 +218,16 @@ export default function App() {
           left: '50%',
           transform: 'translateX(-50%)',
           background: 'rgba(0,0,0,0.9)',
-          border: `3px solid ${toast.color}`,
+          border: '3px solid ' + toast.color,
           color: toast.color,
           padding: '15px 30px',
           borderRadius: '8px',
           fontSize: '18px',
           fontWeight: 'bold',
           zIndex: 1000,
-          animation: 'slideIn 0.3s ease-out',
-          boxShadow: `0 0 20px ${toast.color}`,
+          boxShadow: '0 0 20px ' + toast.color,
         }}>
           {toast.message}
-          <style>{`
-            @keyframes slideIn {
-              from { transform: translateX(-50%) translateY(-30px); opacity: 0; }
-              to { transform: translateX(-50%) translateY(0); opacity: 1; }
-            }
-          `}</style>
         </div>
       )}
 
@@ -232,6 +242,7 @@ export default function App() {
           <h1 style={{
             fontSize: '48px',
             margin: '0 0 10px 0',
+            color: '#00ffff',
             textShadow: '0 0 30px rgba(0,255,255,0.8), 0 0 60px rgba(255,0,255,0.5)',
             letterSpacing: '3px',
           }}>
@@ -253,15 +264,15 @@ export default function App() {
             { label: 'LEVEL', value: player.level, emoji: '⭐', color: '#9933ff' },
             { label: 'GOLD', value: player.gold, emoji: '💰', color: '#ffff00' },
             { label: 'STREAK', value: player.streak, emoji: '🔥', color: '#ff3333' },
-            { label: 'HP', value: `${player.xp}/${player.maxXp}`, emoji: '❤️', color: '#ff0099' },
+            { label: 'HP', value: player.xp + '/' + player.maxXp, emoji: '❤️', color: '#ff0099' },
           ].map((stat, i) => (
             <div key={i} style={{
               background: 'rgba(0,0,0,0.6)',
-              border: `2px solid ${stat.color}`,
+              border: '2px solid ' + stat.color,
               borderRadius: '8px',
               padding: '15px',
               textAlign: 'center',
-              boxShadow: `0 0 15px ${stat.color}33`,
+              boxShadow: '0 0 15px ' + stat.color + '33',
             }}>
               <div style={{ fontSize: '24px', marginBottom: '5px' }}>{stat.emoji}</div>
               <div style={{ fontSize: '10px', color: '#999', letterSpacing: '1px' }}>{stat.label}</div>
@@ -292,9 +303,9 @@ export default function App() {
             border: '1px solid #00ffff',
           }}>
             <div style={{
-              width: `${progress}%`,
+              width: progress + '%',
               height: '100%',
-              background: `linear-gradient(90deg, #00ffff, #ff00ff)`,
+              background: 'linear-gradient(90deg, #00ffff, #ff00ff)',
               transition: 'width 0.5s ease-out',
               boxShadow: '0 0 15px rgba(0,255,255,0.8)',
             }} />
@@ -369,7 +380,7 @@ export default function App() {
                   style={{
                     flex: 1,
                     padding: '12px',
-                    background: 'linear-gradient(135deg, #00ff00, #00ffff)',
+                    background: 'linear-gradient(135deg, #00ff00, #00ffaa)',
                     border: 'none',
                     color: '#000',
                     fontWeight: 'bold',
@@ -378,7 +389,7 @@ export default function App() {
                     fontSize: '14px',
                   }}
                 >
-                  ✅ SAVE
+                  SAVE
                 </button>
                 <button
                   onClick={() => setEditingId(null)}
@@ -394,7 +405,7 @@ export default function App() {
                     fontSize: '14px',
                   }}
                 >
-                  ✕ CANCEL
+                  CANCEL
                 </button>
               </div>
             </div>
@@ -403,7 +414,7 @@ export default function App() {
 
         {/* Quests Section */}
         <h2 style={{ fontSize: '20px', marginBottom: '15px', color: '#00ffff', letterSpacing: '2px' }}>
-          🗡️ TODAY'S QUESTS ({done}/{total})
+          QUESTS ({done}/{total})
         </h2>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
@@ -412,25 +423,13 @@ export default function App() {
               key={quest.id}
               style={{
                 background: quest.done ? 'rgba(0,0,0,0.5)' : 'linear-gradient(135deg, rgba(0,255,255,0.1), rgba(255,0,255,0.1))',
-                border: `2px solid ${quest.done ? '#666' : '#00ffff'}`,
+                border: '2px solid ' + (quest.done ? '#666' : '#00ffff'),
                 borderRadius: '8px',
                 padding: '15px',
                 display: 'flex',
                 gap: '10px',
                 alignItems: 'center',
                 cursor: 'pointer',
-                transition: 'all 0.2s',
-                opacity: quest.done ? 0.6 : 1,
-              }}
-              onMouseEnter={(e) => {
-                if (!quest.done) {
-                  e.currentTarget.style.boxShadow = '0 0 20px rgba(0,255,255,0.6)';
-                  e.currentTarget.style.transform = 'scale(1.02)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = 'none';
-                e.currentTarget.style.transform = 'scale(1)';
               }}
             >
               <button
@@ -440,7 +439,7 @@ export default function App() {
                   width: '40px',
                   height: '40px',
                   borderRadius: '50%',
-                  border: `2px solid ${quest.done ? '#666' : '#00ffff'}`,
+                  border: '2px solid ' + (quest.done ? '#666' : '#00ffff'),
                   background: quest.done ? 'rgba(0,255,255,0.2)' : 'transparent',
                   color: '#00ffff',
                   fontSize: '20px',
@@ -454,12 +453,11 @@ export default function App() {
                 {quest.done ? '✅' : '⚔️'}
               </button>
 
-              <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ flex: 1 }}>
                 <div style={{
                   fontSize: '16px',
                   fontWeight: 'bold',
                   color: quest.done ? '#999' : '#fff',
-                  textDecoration: quest.done ? 'line-through' : 'none',
                 }}>
                   {quest.title}
                 </div>
@@ -481,7 +479,7 @@ export default function App() {
                   fontWeight: 'bold',
                 }}
               >
-                ✏️ EDIT
+                EDIT
               </button>
 
               <button
@@ -497,7 +495,7 @@ export default function App() {
                   fontWeight: 'bold',
                 }}
               >
-                ✕ DELETE
+                DELETE
               </button>
             </div>
           ))}
@@ -517,10 +515,9 @@ export default function App() {
               borderRadius: '8px',
               cursor: 'pointer',
               fontSize: '14px',
-              letterSpacing: '1px',
             }}
           >
-            ➕ ADD QUEST
+            ADD QUEST
           </button>
           <button
             onClick={reset}
@@ -534,17 +531,16 @@ export default function App() {
               borderRadius: '8px',
               cursor: 'pointer',
               fontSize: '14px',
-              letterSpacing: '1px',
             }}
           >
-            🔄 RESET DAY
+            RESET DAY
           </button>
           <button
             onClick={() => setSound(!sound)}
             style={{
               padding: '15px 20px',
               background: sound ? 'linear-gradient(135deg, #00ff00, #00ffaa)' : 'rgba(100,100,100,0.3)',
-              border: `2px solid ${sound ? '#00ff00' : '#666'}`,
+              border: '2px solid ' + (sound ? '#00ff00' : '#666'),
               color: sound ? '#000' : '#999',
               fontWeight: 'bold',
               borderRadius: '8px',
@@ -568,9 +564,11 @@ export default function App() {
           fontWeight: 'bold',
           fontSize: '16px',
         }}>
-          {done === total ? '🏆 PERFECT DAY! 🏆' : `${total - done} quest${total - done !== 1 ? 's' : ''} remaining`}
+          {done === total ? '🏆 PERFECT DAY! 🏆' : (total - done) + ' quest' + (total - done !== 1 ? 's' : '') + ' remaining'}
         </div>
       </div>
     </div>
   );
 }
+
+export default App;
