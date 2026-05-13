@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Zap, Flame, Star, Sword, Gift, Settings, Volume2, VolumeX } from 'lucide-react';
+import { Sword, Volume2, VolumeX } from 'lucide-react';
 
 const QuestTracker = () => {
   const [player, setPlayer] = useState(null);
