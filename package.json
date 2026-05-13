@@ -2,7 +2,7 @@
   "name": "quest-tracker",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://toonai801.github.io/Quest-Tracker/",
+  "homepage": "/",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
